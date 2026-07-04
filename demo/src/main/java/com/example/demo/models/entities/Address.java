@@ -1,32 +1,25 @@
 package com.example.demo.models.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.example.demo.models.dto.absolute.AddressDTO;
+import com.example.demo.models.dto.forms.AddressFormDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table
+@Table(name = "tb_addresses")
 @Getter
 @Setter
 public class Address {
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String street;
     private String number;
     private String district;
     private String city;
     private String state;
     private String zipCode;
-    @OneToOne
-    @JsonIgnore
-    @JoinColumn(name="user_id", unique = true)
-    private User user;
-    @OneToOne
-    @JsonIgnore
-    @JoinColumn(name = "local_id", unique = true)
-    private Local location;
 
     public Address(){}
 
@@ -37,5 +30,24 @@ public class Address {
         this.city = city;
         this.state = state;
         this.zipCode = zipCode;
+    }
+
+    public AddressDTO toDTO() {
+        return new AddressDTO(id, street, number, district, city, state, zipCode);
+    }
+
+    public AddressFormDTO toFormDTO() {
+        return new AddressFormDTO(street, number, district, city, state, zipCode);
+    }
+
+    public static Address fromFormDTO(AddressFormDTO addressFormDTO) {
+        return new Address(
+                addressFormDTO.street(),
+                addressFormDTO.number(),
+                addressFormDTO.district(),
+                addressFormDTO.city(),
+                addressFormDTO.state(),
+                addressFormDTO.zipCode()
+        );
     }
 }
